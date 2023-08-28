@@ -19,3 +19,16 @@ static bool streq(const char *a, const char *b)
 {
     return strcmp(a, b) == 0;
 }
+
+/**
+ * @brief Returns true if @p a is equal to @p b.
+ *
+ * @param a First string.
+ * @param b Second string.
+ * @param n Length.
+ * @return True if @p a == @p b, false otherwise.
+ */
+static bool strneq(const char *a, const char *b, const size_t n)
+{
+    return strncmp(a, b, n) == 0;
+}

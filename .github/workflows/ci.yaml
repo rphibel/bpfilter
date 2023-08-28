@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - main
+      - add-ci-workflow-2
   pull_request:
     branches:
       - main
+      - add-ci-workflow-2
 
 permissions:
   checks: write

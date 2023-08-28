@@ -1,0 +1,6 @@
+coverage:
+  status:
+    patch:
+      default:
+        # basic
+        target: 50%
