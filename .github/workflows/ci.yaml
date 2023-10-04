@@ -13,12 +13,12 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         buildtype: [ 'debug', 'release' ]
         image: [ 'fedora:38', 'ubuntu:23.10' ]
+    runs-on: ubuntu-22.04
     container: ${{ matrix.image }}
     steps:
       - name: Install packages Fedora
@@ -77,3 +77,13 @@ jobs:
       - name: Generate documentation
         if: matrix.buildtype == 'release'
         run: make -C $GITHUB_WORKSPACE/build doc
+
+  build-m1:
+    runs-on: macos-latest-xlarge
+    steps:
+      - name: Setup docker (missing on MacOS)
+        run: |
+          brew install docker
+          colima start
+      - name: Run CI
+        uses: ./.github/actions/ci-action
