@@ -1,0 +1,42 @@
+name: Build and Test
+run-name: Build and Test 🚀
+on: [pull_request]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    permissions:
+      checks: write
+      pull-requests: write
+    steps:
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install cmake doxygen python3-sphinx libcriterion-dev lcov libbpf-dev
+          sudo wget https://apt.llvm.org/llvm-snapshot.gpg.key
+          sudo apt-key add llvm-snapshot.gpg.key
+          echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main" | sudo tee -a /etc/apt/sources.list
+          echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main" | sudo tee -a /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get -y install clang-tidy-16 clang-format-16
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Create build directory
+        run: |
+          mkdir build
+          cd build
+      - name: Configure build
+        run: cmake ${{ github.workspace }}
+      - name: Lint
+        run: make lint
+      - name: Check style
+        run: make checkstyle
+      - name: Build
+        run: make
+      - name: Test
+        run: make test
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            tests/**/*.xml
